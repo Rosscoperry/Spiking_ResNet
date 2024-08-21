@@ -14,6 +14,9 @@ if __name__ == '__main__':
     from utils import *
 
     torch.backends.cudnn.benchmark = True
+    
+    from distutils.sysconfig import get_python_lib
+    print(get_python_lib())
 
     # Parse input arguments
     parser = argparse.ArgumentParser(description='Train S-ResNet',
@@ -112,7 +115,10 @@ if __name__ == '__main__':
 
         from spikingjelly.datasets.cifar10_dvs import CIFAR10DVS
         # from spikingjelly.datasets import split_to_train_test_set  # Original function
-
+        
+        # test conversion
+        
+        
         # Redefining split function to make it faster
         def split_to_train_test_set(train_ratio: float, origin_dataset: torch.utils.data.Dataset, num_classes: int,
                                     random_split: bool = False):

@@ -31,7 +31,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.device is not None:
-        torch.cuda.set_device(args.device)
+        torch.cuda.set_device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     seed = args.seed
     np.random.seed(seed)
@@ -138,6 +138,7 @@ if __name__ == '__main__':
                         boosting=args.boosting, poisson_gen=args.poisson_gen)
     elif args.arch == 'sresnet_nm':
         model = SResnetNM(n=args.n, nFilters=args.nFilters, num_steps=num_steps, leak_mem=leak_mem, img_size=img_size, num_cls=num_cls)
+        
 
     else:
         print("Architecture name not found")
@@ -145,7 +146,7 @@ if __name__ == '__main__':
 
     # Load weigths
 
-    model_dict = torch.load(args.model_path, map_location='cpu')
+    model_dict = torch.load(args.model_path, map_location='cuda:0')
     state_dict = model_dict['state_dict']
     reload_epoch = model_dict['global_step']
     best_acc = model_dict['accuracy']
@@ -161,15 +162,15 @@ if __name__ == '__main__':
         else:
             print('skiping: ' + name)
 
-    print("Reloaded weigths, checkpoint taken at epoch {reload_epoch} with validation "
+    print("Reloaded weights, checkpoint taken at epoch {reload_epoch} with validation "
           "accuracy {best_acc} ".format(reload_epoch=reload_epoch,best_acc=best_acc))
 
     ###############
 
-    model.eval()  # test mode
-    if args.device is not None:
-        model.cuda()
 
+    model.to("cuda")    
+        
+    model.eval()  # test mode
     # Compute inference in all test set
 
     acc_top1, acc_top5 = [], []
@@ -178,8 +179,8 @@ if __name__ == '__main__':
 
         for i, data in enumerate(testloader):
             inputs, labels = data
-            inputs = inputs.to(args.device, dtype=torch.float)
-            labels = labels.cuda()
+            inputs = inputs.to("cuda", dtype=torch.float)
+            labels = labels.to("cuda")
 
             start_time = time.time()
             out = model(inputs)

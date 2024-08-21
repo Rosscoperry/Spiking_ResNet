@@ -33,6 +33,10 @@ Windows:\
 `requirements.bat`
 
 ### Train S-ResNet
+
+requires the following bug fix to the spikingjelly module: https://github.com/fangwei123456/spikingjelly/issues/370
+
+
 - CIFAR-10:
 ```
 python train.py --num_steps 50 --lr 0.026844 --leak_mem 0.8744 --arch 'sresnet' --dataset  'cifar10' --num_workers 4 --num_epochs 70
@@ -59,6 +63,7 @@ This will start the epoch count from 0, reset the accuracy history and skip the 
 Connected layer and Conv1.
 
 To use the boosting strategy in the final layer use the flag `--boosting`. Note that if a checkpoint was trained using this strategy, the flag will need to be present when we load it for further training or testing. _The pre-trained network in CIFAR-10 "cifar10_sresnet-boost.pth.tar" needs this flag._ 
+
 
 ### Test S-ResNet
 For testing, the location of the saved model is passed with `--model_path` alongside the architecture flags
